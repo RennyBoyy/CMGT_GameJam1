@@ -55,7 +55,7 @@ public class EnemyStateMachine : MonoBehaviour
     if (state == State.death)
     {
       enemyPathFinding.animator.SetBool("IsMoving", false);
-      enemyPathFinding.animator.SetBool("IsDead", true);
+      enemyPathFinding.animator.SetBool("IsDead", true);  
     }
   }
 
@@ -92,7 +92,7 @@ public class EnemyStateMachine : MonoBehaviour
 
   private IEnumerator DeathCorutine()
   {
-    yield return new WaitForSeconds(2f);
+    yield return new WaitForSeconds(1f);
     Destroy(gameObject);
   }
 
