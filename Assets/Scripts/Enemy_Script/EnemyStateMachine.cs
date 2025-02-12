@@ -36,6 +36,7 @@ public class EnemyStateMachine : MonoBehaviour
     if (state == State.following)
     {
       Debug.Log("Following Player");
+      enemyPathFinding.animator.SetBool("IsChasing", true);
       enemyPathFinding.animator.SetBool("IsMoving", true);
       Vector2 playerPosition = enemyPathFinding.Player.transform.position;
 
@@ -86,6 +87,11 @@ public class EnemyStateMachine : MonoBehaviour
       Debug.Log("Dying");
       state = State.death;
       enemyPathFinding.animator.SetBool("IsDead", true);
+      PlayerController playerController = other.gameObject.GetComponent<PlayerController>();
+      if (playerController != null)
+      {
+        playerController.KillEnemy();
+      }
       StartCoroutine(DeathCorutine());
     }
   }
@@ -103,6 +109,7 @@ public class EnemyStateMachine : MonoBehaviour
       if (state == State.roaming)
       {
         enemyPathFinding.animator.SetBool("IsMoving", true);
+        enemyPathFinding.animator.SetBool("IsChasing", false);
         Vector2 roamPosition = GetRoamPosition();
         float roamDuration = Random.Range(1f, 3f);
         float elapsedTime = 0f;

@@ -16,7 +16,9 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
 
-    private bool isAttacking = false; // Prevent movement when attacking
+    private bool isAttacking = false; 
+    private int killCount = 0; 
+    public float growthFactor = 0.1f;
 
     private PlayerInput playerInput;
 
@@ -99,5 +101,18 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f); // Adjust duration to match attack animation
         isAttacking = false;
+    }
+    [SerializeField] private TMPro.TextMeshProUGUI killCountText;   
+    
+    public void KillEnemy()
+    {
+        killCount++;
+        Debug.Log($"Enemies Killed: {killCount}");
+        transform.localScale += new Vector3(growthFactor, growthFactor, 0);
+        
+        if (killCountText != null)
+        {
+            killCountText.text = $"Kills: {killCount}";
+        } 
     }
 }
