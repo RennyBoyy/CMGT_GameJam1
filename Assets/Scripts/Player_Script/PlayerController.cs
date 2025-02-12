@@ -16,15 +16,22 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
 
+    private bool isAttacking = false; // Prevent movement when attacking
+
+    private PlayerInput playerInput;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        playerInput = GetComponent<PlayerInput>(); // Get Player Input component
     }
 
     private void FixedUpdate()
     {
+        if (isAttacking) return; // Prevent movement when attacking
+
         bool success = false;
 
         if (movementInput != Vector2.zero)
@@ -45,15 +52,9 @@ public class PlayerController : MonoBehaviour
         // Update animation state
         animator.SetBool("isMoving", success);
 
-        // Flip the sprite based on movement direction
-        if (movementInput.x < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
-        else if (movementInput.x > 0)
-        {
-            spriteRenderer.flipX = false;
-        }
+        // Flip sprite based on movement direction
+        if (movementInput.x < 0) spriteRenderer.flipX = true;
+        else if (movementInput.x > 0) spriteRenderer.flipX = false;
     }
 
     private bool TryMove(Vector2 direction)
@@ -75,8 +76,28 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
+    // New Input System Movement Callback
     void OnMove(InputValue movementValue)
     {
         movementInput = movementValue.Get<Vector2>();
+    }
+
+    // New Input System Attack Callback
+    void OnAttack()
+    {
+        if (!isAttacking)
+        {
+            isAttacking = true;
+            animator.SetTrigger("Attack");
+
+            // Optional: Reset attack state after animation finishes
+            StartCoroutine(ResetAttack());
+        }
+    }
+
+    IEnumerator ResetAttack()
+    {
+        yield return new WaitForSeconds(0.5f); // Adjust duration to match attack animation
+        isAttacking = false;
     }
 }
