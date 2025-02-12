@@ -5,22 +5,41 @@ using UnityEngine;
 public class EnemyPathFinding : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
+    public GameObject Player;
 
-    private Rigidbody2D rb;
+    
     private Vector2 movementDirection;
+    public Rigidbody2D Rb { get; private set; }
+    
+    public Animator animator;
+    public SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
+        Rb = GetComponent<Rigidbody2D>();
     }
 
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movementDirection * moveSpeed * Time.fixedDeltaTime);
+        Rb.MovePosition(Rb.position + movementDirection * moveSpeed * Time.fixedDeltaTime);
     }
 
     public void MoveTo(Vector2 targetPosition)
     {
-        movementDirection = targetPosition;
+        movementDirection = (targetPosition - Rb.position).normalized;
+       
     }
+
+    public void FollowTarget(Vector2 targetPosition)
+    {
+        MoveTo(targetPosition);
+    }
+
+    public void StopMovement()
+    {
+        movementDirection = Vector2.zero;
+        Rb.linearVelocity = Vector2.zero;
+        animator.SetBool("IsMoving", false);
+    }
+    
 }
