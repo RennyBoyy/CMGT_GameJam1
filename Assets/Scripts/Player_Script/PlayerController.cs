@@ -16,11 +16,14 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
 
-    private bool isAttacking = false; 
-    private int killCount = 0; 
+    private bool isAttacking = false;
+    private int killCount = 0;
     public float growthFactor = 0.1f;
 
     private PlayerInput playerInput;
+
+    // Movement control
+    private bool canMove = false; // Movement disabled initially
 
     void Start()
     {
@@ -32,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isAttacking) return; // Prevent movement when attacking
+        if (!canMove || isAttacking) return; // Prevent movement if canMove is false or attacking
 
         bool success = false;
 
@@ -102,17 +105,24 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.5f); // Adjust duration to match attack animation
         isAttacking = false;
     }
-    [SerializeField] private TMPro.TextMeshProUGUI killCountText;   
-    
+
+    [SerializeField] private TMPro.TextMeshProUGUI killCountText;
+
     public void KillEnemy()
     {
         killCount++;
         Debug.Log($"Enemies Killed: {killCount}");
         transform.localScale += new Vector3(growthFactor, growthFactor, 0);
-        
+
         if (killCountText != null)
         {
             killCountText.text = $"Kills: {killCount}";
-        } 
+        }
+    }
+
+    // Method to enable movement
+    public void EnableMovement()
+    {
+        canMove = true;
     }
 }
